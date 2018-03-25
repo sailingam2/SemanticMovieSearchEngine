@@ -1,0 +1,8 @@
+function killall(){
+	alert($('#song').val());
+	$.get("http://localhost:3030/myDataset/query?query=SELECT ?anyth WHERE { ?anyth <http://127.0.0.1:3333/hasAlbum> \""+$('#song').val()+"\" } Limit 10" , function(data){
+	$
+	$.get("http://localhost:3030/myDataset/query?query=SELECT * WHERE { ?anyth ?a ?b }" , function(data){
+		$('#dataPlace').text(JSON.stringify(data));
+	});
+}

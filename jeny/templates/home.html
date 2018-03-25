@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Moviepedia</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" type="text/css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/spin.min.js' %}"></script>
+</head>
+<body>
+    <div class="container" style="width:98.27%;">
+      <div class="jumbotron">
+        <h2 style="color:#fff;margin-top:10px!important;font-weight:200;">Moviepedia 
+            {% if loggedin %}
+            <button onclick="window.location.href='/register'" type="button" style="margin-left:50px;" class="m-searchTrigger btn btn-lg btn-danger">Logged in as {{user.username}}</button>
+            <button onclick="window.location.href='/signin'" type="button"   class="m-searchTrigger btn btn-lg btn-danger">Logout</button>
+            {% else %}
+            <button onclick="window.location.href='/register'" type="button" style="margin-left:50px;" class="m-searchTrigger btn btn-lg btn-danger">Register</button>
+            <button onclick="window.location.href='/signin'" type="button"   class="m-searchTrigger btn btn-lg btn-danger">Signin</button>
+            {% endif %}
+        </h2>
+    </div>
+</div>
+ <div class="container-fluid">
+            <div class="row">
+            <div class="col-xs-6">
+                {% for i in results %}
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                     <h2>{{i.title.value}}</h2>
+                <div>IMDB Score : {{i.imdb_rating.value}}</div>
+               {% if '{{i.poster.value}}' == 'N/A' %}
+               <img src = "{% static 'images/notavailable.png' %}">
+               {% else %}
+                <img src="{{i.poster.value}}"  style="width:150px;height:150px;">
+                {% endif %}
+                </div>
+                {% endfor %}
+
+                
+            </div>
+
+
+
+
+                <div class="col-xs-6">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                     <h1>Search Movies</h1>
+
+            <form class="form-mini" method="post" action="/searchForm">
+                {% csrf_token %}
+                <div class="form-row">
+                    <input type="text" name="actor" placeholder="Actor Name">
+                </div>
+
+                <div class="form-row">
+                    <input type="text" name="actress" placeholder="Actress Name">
+                </div>
+                <div class="form-row">
+                    <input type="text" name="director" placeholder="Director Name">
+                </div>
+
+                <div class="form-row">
+                    <label>
+                        <select name="imdb">
+                            <option value="">Choose IMDB Rating</option>
+                            <option value="4.5">Less than 5</option>
+                            <option value="5.5">5-6</option>
+                            <option value="6.5">6-7</option>
+                            <option value="7.5">7-8</option>
+                            <option value="8.5">8-9</option>
+                            <option value="9.5">9-10</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>
+                        <select name="genre">
+                            <option value="">Choose Genre</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Action">Action</option>
+                            <option value="Crime">Crime</option>
+                            <option value="Drama">Drama</option>
+                            <option value="Family">Family</option>
+                            <option value="Romance">Romance</option>
+                            
+                            <option value="Thriller">Thriller</option>
+                            <option value="History">History</option>
+                            <option value="Biography">Biography</option>
+                            <option value="Horror">Horror</option>
+                            <option value="Adventure">Adventure</option>
+                            <option value="Mystery">Mystery</option>
+                            <option value="War">War</option>
+                            <option value="Musical">Musical</option>
+                            <option value="Music">Music</option>
+                            <option value="Documentary">Documentary</option>
+                            <option value="News">News</option>
+                            <option value="Sci-Fi">Sci-Fi</option>
+                            <option value="Short">Short</option>
+                            <option value="Animation">Animation</option>
+                            <option value="Sport">Sport</option>
+                            <option value="Fantasy">Fantasy</option>
+                            
+                        </select>
+                    </label>
+                </div>
+                <div class="form-row">
+                    <label>
+                        <select name="year">
+                            <option value="">Choose Year Range</option>
+                            <option value="2011">2011</option>
+                            <option value="2012">2012</option>
+                            <option value="2013">2013</option>
+                            <option value="2014">2014</option>
+                            <option value="2015">2015</option>
+                        </select>
+                    </label>
+                </div>
+                
+
+               
+                <div class="form-row form-last-row">
+                    <button type="submit">Submit Form</button>
+                </div>
+
+            </form>
+        </div>
+                </div>
+
+
+
+            </div>
+            <!--
+            <div class="row">
+             <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                     <h2>Jane Eyre</h2>
+                <div>IMDB Score : 7/10</div>
+               
+                <img src="{% static 'images/janeeyre.jpeg' %}"  style="width:150px;height:150px;">
+                </div>
+                 <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                     <h2>Jane Eyre</h2>
+                <div>IMDB Score : 7/10</div>
+               
+                <img src="{% static 'images/janeeyre.jpeg' %}"  style="width:150px;height:150px;">
+                </div>
+            </div>
+            -->
+        </div>
+
+<script type="text/javascript">
+    function killall(){
+    //alert($('#song').val());
+    $.get("http://localhost:3030/myDataset/query?query=SELECT ?anyth WHERE { ?anyth <http://127.0.0.1:3333/hasAlbum> \""+$('#song').val()+"\" } Limit 10" , function(data){
+    $
+    $.get("http://localhost:3030/myDataset/query?query=SELECT * WHERE { ?anyth ?a ?b }" , function(data){
+        $('#dataPlace').text(JSON.stringify(data));
+    });
+});
+}
+killall();
+
+
+    var waitingDialog = (function ($) {
+
+    // Creating modal dialog's DOM
+    var $dialog = $(
+        '<div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true" style="padding-top:15%; overflow-y:visible;">' +
+        '<div class="modal-dialog modal-m">' +
+        '<div class="modal-content">' +
+        '<div class="modal-header"><h3 style="margin:0;"></h3></div>' +
+        '<div class="modal-body">' +
+        '<div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" style="width: 100%"></div></div>' +
+        '</div>' +
+        '</div></div></div>');
+
+    return {
+        /**
+         * Opens our dialog
+         * @param message Custom message
+         * @param options Custom options:
+         *                options.dialogSize - bootstrap postfix for dialog size, e.g. "sm", "m";
+         *                options.progressType - bootstrap postfix for progress bar type, e.g. "success", "warning".
+         */
+         show: function (message, options) {
+            // Assigning defaults
+            var settings = $.extend({
+                dialogSize: 'm',
+                progressType: ''
+            }, options);
+            if (typeof message === 'undefined') {
+                message = 'Loading';
+            }
+            if (typeof options === 'undefined') {
+                options = {};
+            }
+            // Configuring dialog
+            $dialog.find('.modal-dialog').attr('class', 'modal-dialog').addClass('modal-' + settings.dialogSize);
+            $dialog.find('.progress-bar').attr('class', 'progress-bar');
+            if (settings.progressType) {
+                $dialog.find('.progress-bar').addClass('progress-bar-' + settings.progressType);
+            }
+            $dialog.find('h3').text(message);
+            // Opening dialog
+            $dialog.modal();
+        },
+        /**
+         * Closes dialog
+         */
+         hide: function () {
+            $dialog.modal('hide');
+        }
+    }
+
+})(jQuery);
+function sendEmail(email,searchTerm){
+    var url = 'sendEmail';
+    var data = {'emailId':email,'keyWord':searchTerm};
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data,
+        success: function(result){
+
+        }
+    });
+}
+$('.m-searchTrigger').on('click',function(){
+    var searchTerm = $('input[name="searchTerm"]').val();
+    var email = $('input[name="email"]').val();
+    if(!searchTerm){
+        $('.alert').removeClass('hide');
+        return false;
+    }
+    else
+        $('.alert').addClass('hide');
+    waitingDialog.show('Analyzing Tweets and generating Sentiment Analysis for '+searchTerm);
+    sendEmail(email,searchTerm);
+    var url = 'negativemap?keyWord='+searchTerm;
+    window.location.href = url;
+
+
+
+
+});
+</script>
+</body>
+</html>

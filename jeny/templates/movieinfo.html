@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Moviepedia</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/results.css' %}" type="text/css">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/spin.min.js' %}"></script>
+</head>
+
+<body>
+<div class="table-title">
+<h3>Info &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a style="color:black;text-decoration: underline;" href="/">Go to HomePage</a></h3>
+</div>
+<table class="table-fill">
+<thead>
+<tr>
+<th class="text-left">Attributes</th>
+<th class="text-left">Values</th>
+
+</tr>
+</thead>
+<tbody class="table-hover">
+{%for item,value in res.items %}
+<tr>
+
+<td  class="text-left">{{item}}</td>
+{% if item == 'poster' %}
+<td class="text-left"><img src="{{value}}"> </td>
+{% elif item == 'actor' %}
+
+<td class="text-left actorclass">{{value}}</td>
+
+{% else %}
+<td  class="text-left">{{value}}</td>
+{% endif %}
+</tr>
+
+{% endfor %}
+</tbody>
+</table>
+  <script type="text/javascript">
+      
+            var a = $('.actorclass').html();
+            console.log(a);
+            var items = a.split(',');
+            var f = "";
+            for (var i = items.length - 1; i >= 0; i--) {
+                items[i]
+                f+="<span style='cursor: pointer;  text-decoration: underline;' class='clickable'>"; 
+                f+= items[i];
+                f+= "</span>";
+                f+=', ';
+            }
+            $('.actorclass').html(f);
+            $('body.clickable').css({'color':'red'});
+            $(document.body).on('click', 'span' ,function(){
+                var val = $(this).html();
+                window.location.href = '/actorinfo?actor='+val;
+
+            });
+
+
+    
+  </script>
+
+  </body>
+  </html>

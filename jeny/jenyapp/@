@@ -1,0 +1,102 @@
+from django.shortcuts import render
+
+# Create your views here.
+
+import sys
+from django.http import HttpResponse
+
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+from django.contrib.auth.models import User
+def home(request):
+    template = 'home.html'
+    context = {} 
+    return render(request, template, context)
+
+def register(request):
+	if request.method == 'POST':
+		username = request.POST.get('name')
+		email = request.POST.get('email')
+		password = request.POST.get('password')
+		user = User.objects.create_user(username, email, password)
+		user.save()
+		context = {'loggedin':1}
+		return render(request, 'register.html', context)
+
+	template = 'register.html'
+	context = {}
+	return render(request, template, context)
+
+def signin(request):
+	if request.method == 'POST':
+		email = request.POST.get('email')
+		password = request.POST.get('password')
+		if User.objects.filter(email=email):
+			user = User.objects.filter(email=email)[0]
+			context = {'loggedin':1,'user':user}
+			return render(request, 'home.html', context)
+		context = {}
+		
+		return render(request, 'register.html', context)
+	template = 'signin.html'
+	context = {}
+	return render(request, template, context)
+
+import getQuery
+
+from SPARQLWrapper import SPARQLWrapper, JSON
+def searchForm(request):
+	
+	postData = request.POST
+	inDict = {}
+	for key,val in postData.items():
+		inDict.update({key:val})
+
+	q = getQuery.formQuery(inDict)
+	print "indict"
+	sparqlQ = SPARQLWrapper("http://localhost:3030/movies/query")
+	print "qyer",q
+	sparqlQ.setQuery(q)
+	sparqlQ.setReturnFormat(JSON)
+
+	results = sparqlQ.query().convert()
+
+        res = []
+	for result in results["results"]["bindings"]:
+		res.append(result["title"])
+	context = {}
+        context['res'] = res
+	return render(request, 'results.html', context)
+
+def getMovieInfo(request):
+	movie = request.GET.get('movie')
+	q = getQuery.getMovieInfo(movie)
+	print "indict"
+	sparqlQ = SPARQLWrapper("http://localhost:3030/movies/query")
+	print "qyer",q
+	sparqlQ.setQuery(q)
+	sparqlQ.setReturnFormat(JSON)
+
+	results = sparqlQ.query().convert()
+
+        #res = []
+	#for result in results["results"]["bindings"]:
+		#res.append(result["ti)
+	context = {}
+	res = {}
+        context['res'] = results["results"]["bindings"]
+        print "fsadfdsafsdfsdfcontedx",context['res']
+        for i in context['res']:
+        	for key,val in i.items():
+        		if res.get(key):
+        			res[key] += " " + val['value']
+        		else:
+        			res[key] = val['value']
+        context['res'] = res
+
+        print context
+	return render(request, 'movieinfo.html', context)
+
+
+

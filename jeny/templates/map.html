@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+  <title>Sentipede</title>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
+
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+ 
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/spin.min.js' %}"></script>
+
+  <style>
+  html, body, #map-canvas {
+    height: 100%;
+    margin: 0px;
+    padding: 0px
+  }
+  #panel {
+    position: absolute;
+    top: 5px;
+    left: 45%;
+    margin-left: -180px;
+    z-index: 5;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+  }
+  </style>
+
+  <script>
+
+var map, pointarray, heatmap;
+
+var heatMapData = [];
+var center_lat = 0
+var center_lng = 0
+  $(function() {
+
+  $(document).ready(function(){
+
+
+
+  $('#panel').attr('style', 'display:block;margin-top:75px;');
+
+  $('#map-canvas').attr('style', 'visibility:visible')
+  $('#mainContent').html('')
+  var latLngList = {{latLngList | safe}};
+  latLngList = [{'lat': -33.8804817, 'lng': 151.2011871}, {'lat': -33.8806992, 'lng': 151.2014313}, {'lat': -33.8804588, 'lng': 151.2011566}, {'lat': -33.8806381, 'lng': 151.2015228}, {'lat': -33.8808403, 'lng': 151.2014313}, {'lat': -33.8807297, 'lng': 151.2014923}, {'lat': -33.8805199, 'lng': 151.2015686}, {'lat': -33.8805199, 'lng': 151.2015686}, {'lat': -33.8805199, 'lng': 151.2015686}, {'lat': -33.8805199, 'lng': 151.2015686}];
+  latLngList = [{'lat': 12.97159, 'lng': 77.594562},{'lat': 12.75259, 'lng': 77.584547},{'lat': 12.68359, 'lng': 77.614539},{'lat': 12.71459, 'lng': 77.634572},{'lat': 12.50559, 'lng': 77.374588},{'lat': 12.41659, 'lng': 77.434562},{'lat': 12.96159, 'lng': 77.584562},{'lat': 12.33159, 'lng': 77.574562},{'lat': 12.25159, 'lng': 77.564562},{'lat': 12.18159, 'lng': 77.554562},{'lat': 12.92159, 'lng': 77.544562},{'lat': 12.98159, 'lng': 77.544562},{'lat': 12.90159, 'lng': 77.534562},{'lat': 12.89159, 'lng': 77.524562},{'lat': 12.98159, 'lng': 77.604562},{'lat': 12.97159, 'lng': 77.614562}];
+  for (var i in latLngList) {
+      //heatMapData.push({location: new google.maps.LatLng({ lat: latLngList[i].lat, lng: latLngList[i].lng}), weight: 1})
+      heatMapData.push({location: new google.maps.LatLng(latLngList[i].lat,latLngList[i].lng), weight: 1})
+  }
+
+
+//  if (latLngList && i) {
+    //center_lat = latLngList[i].lat
+    //center_lng = latLngList[i].lng
+    center_lat = 12.97359;  // lat and long for Sydney
+    center_lng = 77.594562;
+  initialize();
+  window.scrollTo(0, 0);
+
+   });
+
+  });
+
+
+
+function initialize() {
+  var mapOptions = {
+    zoom: 12,
+    center: { lat: center_lat, lng: center_lng},
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+
+  map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+
+  var pointArray = new google.maps.MVCArray(heatMapData);
+
+  heatmap = new google.maps.visualization.HeatmapLayer({
+    data: pointArray
+  });
+
+  heatmap.setMap(map);
+  changeGradient();
+  changeRadius();
+}
+
+function toggleHeatmap() {
+  heatmap.setMap(heatmap.getMap() ? null : map);
+}
+
+function changeGradient() {
+  var gradient = [
+    'rgba(67, 123, 1, 0)',
+    'rgba(12, 213, 1, 1)',
+    'rgba(56, 214, 1, 1)',
+    'rgba(23, 123, 1, 1)',
+    'rgba(90, 76, 1, 1)',
+    'rgba(72, 0, 142, 1)',
+    'rgba(78, 0, 217, 1)',
+    'rgba(32, 0, 21, 1)',
+    'rgba(90, 0, 54, 1)',
+    'rgba(110, 0, 76, 1)',
+    'rgba(15, 0, 74, 1)',
+    'rgba(190, 0, 63, 1)',
+    'rgba(271, 0, 31, 1)',
+    'rgba(155, 0, 0, 1)'
+
+  ]
+  heatmap.set('gradient', heatmap.get('gradient') ? gradient : gradient);
+  //heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+}
+
+function changeRadius() {
+  heatmap.set('radius', heatmap.get('radius') ? 20 : 20);
+  //heatmap.set('radius', heatmap.get('radius') ? null : 20);
+}
+
+function changeOpacity() {
+  heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
+}
+
+
+  </script>
+
+
+</head>
+<body>
+ <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Sentipede</a>
+    </div>
+   
+  <a href="/feedback"><button style="margin-top:5px;" type="button" class="btn  btn-danger">Reach Customers</button></a>
+  
+      <ul class="nav navbar-nav navbar-right">
+              
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Select Sentiment <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a id="postive">Positive</a></li>
+                  <li><a id="negative">Negative</a></li>
+                  
+                </ul>
+              </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Download IPList for Sentiment <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a id="postiveIp">Positive</a></li>
+                  <li><a id="negativeIp">Negative</a></li>
+                  
+                </ul>
+              </li>
+            </ul>
+   
+  </div>
+</nav>
+    {% if isShowButtons %}
+    <div style = "display:none;" id="panel">
+      <button onclick="toggleHeatmap()">Toggle Heatmap</button>
+      <button onclick="changeGradient()">Change gradient</button>
+      <button onclick="changeRadius()">Change radius</button>
+      <button onclick="changeOpacity()">Change opacity</button>
+    </div>
+    {% endif %}
+    <div id="map-canvas"></div>
+     <script type="text/javascript">
+        $(document).ready(function(){
+          function getParameterByName(name) {
+             name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+             var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+             results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+         }
+        $('#positive').on('click',function(){
+          var keyWord = getParameterByName('keyWord');
+          window.location.href = 'postivemap?keyWord='+keyWord;
+        });
+      
+        $('#positiveIp').on('click',function(){
+            var keyWord = getParameterByName('keyWord');
+            var data = {'keyWord':keyWord};
+            var url = 'downloadPositive';
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                success: function(result){
+                    
+                }
+              });
+        });
+         $('#negativeIp').on('click',function(){
+            var keyWord = getParameterByName('keyWord');
+            var data = {'keyWord':keyWord};
+            var url = 'downloadNegative';
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                success: function(result){
+                    
+                }
+              });
+        });
+    });
+    </script>
+    <script type="text/javascript">
+  $('#negative').on('click',function(){
+          var keyWord = getParameterByName('keyWord');
+          window.location.href = 'negativemap?keyWord='+keyWord;
+        });
+        $('#positive').on('click',function(){
+          var keyWord = getParameterByName('keyWord');
+          window.location.href = 'postivemap?keyWord='+keyWord;
+        });
+    </script>
+</body>
+</html>
